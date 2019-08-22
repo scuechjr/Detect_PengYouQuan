@@ -6,7 +6,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import com.example.swee1.pengyouquan.MyAccessibilityServiceV2;
+import com.example.swee1.pengyouquan.MyAccessibilityService;
 import com.example.swee1.pengyouquan.PrintUtils;
 import com.example.swee1.pengyouquan.domain.NodeDetail;
 import com.example.swee1.pengyouquan.domain.enums.DataTypeEnum;
@@ -382,7 +382,7 @@ public class NodeUtils {
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static AccessibilityNodeInfo getRoot() {
-        return MyAccessibilityServiceV2.getInstance().getRootInActiveWindow();
+        return MyAccessibilityService.getInstance().getRootInActiveWindow();
     }
 
     /**

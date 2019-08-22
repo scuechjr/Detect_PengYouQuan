@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="com.example.swee1.pengyouquan.MyAccessibilityServiceV2"
+            android:name="com.example.swee1.pengyouquan.MyAccessibilityService"
             android:enabled="true"
             android:exported="true"
             android:label="朋友圈"

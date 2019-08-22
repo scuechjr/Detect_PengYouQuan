@@ -27,7 +27,7 @@ public class NodeUtils {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static AccessibilityNodeInfo findNodeInfosByClassName(AccessibilityNodeInfo nodeInfo, String className) {
         if (nodeInfo == null) {
-            nodeInfo = MyAccessibilityServiceV2.getInstance().getRootInActiveWindow();
+            nodeInfo = MyAccessibilityService.getInstance().getRootInActiveWindow();
             if (nodeInfo == null) {
                 return null;
             }
@@ -61,7 +61,7 @@ public class NodeUtils {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static AccessibilityNodeInfo findNodeInfosByText(AccessibilityNodeInfo root, String text) {
         if (root == null) {
-            root = MyAccessibilityServiceV2.getInstance().getRootInActiveWindow();
+            root = MyAccessibilityService.getInstance().getRootInActiveWindow();
             if (root == null) {
                 return null;
             }
