@@ -1,10 +1,11 @@
-/build
-/.idea/
-/.gradle/
-/gradle
+build/
+.idea/
+.gradle/
+gradle/
 .DS_Store
 local.properties
-/*.iml
-/build
+*.iml
 release.properties
 qmuidemo.keystore
+gradlew
+gradlew.bat
