@@ -10,6 +10,8 @@ import com.example.swee1.pengyouquan.domain.JobParams;
 import com.example.swee1.pengyouquan.service.ConfigService;
 import com.example.swee1.pengyouquan.service.FriendService;
 
+import java.util.List;
+
 public class JobUtils {
     private static final String HOST = "http://192.168.8.103:8080";
 //    private static final String HOST = "http://192.168.1.13:8080";
@@ -22,6 +24,15 @@ public class JobUtils {
             FriendService.getInstance().add(friend);
         } catch (Exception e) {
             PrintUtils.log("error", "save friend error, msg: " + NodeUtils.getStackTraceInfo(e));
+        }
+    }
+
+    public static void export(final String url, final List<FriendBean> friends) {
+        try {
+            String resp = HttpUtils.post(url, JSON.toJSONBytes(friends), false);
+            PrintUtils.log("export friend response", resp);
+        } catch (Exception e) {
+            PrintUtils.log("error", "export friend error, msg: " + NodeUtils.getStackTraceInfo(e));
         }
     }
 

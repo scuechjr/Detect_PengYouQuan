@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">朋友圈屏蔽检测器</string>
     <string name="description">朋友圈屏蔽检测器</string>
+    <string name="action_search">搜索</string>
+    <string name="action_settings">设置</string>
+    <string name="action_show_forbidden">显示屏蔽联系人</string>
+    <string name="action_show_all">显示全部联系人</string>
+    <string name="action_distinct">联系人去重显示</string>
+    <string name="action_export">导出当前联系人</string>
 </resources>

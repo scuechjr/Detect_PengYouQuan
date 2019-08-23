@@ -133,11 +133,11 @@ public class WebChatUtils {
                     NodeDetail childJoin = NodeUtils.joinChildNode(listViewNode.getChild(1));
                     if (null == childJoin || null == childJoin.getText() || childJoin.getText().length() < 1) {
                         friend.setForbiddenVisitPengYouQuan(true);
-                        friend.setPengYouQuanDayLimitDesc("朋友圈被禁用");
+                        friend.setPengYouQuanDayLimitDesc("朋友圈被屏蔽");
                     }
                 } else {
                     friend.setForbiddenVisitPengYouQuan(true);
-                    friend.setPengYouQuanDayLimitDesc("朋友圈被禁用");
+                    friend.setPengYouQuanDayLimitDesc("朋友圈被屏蔽");
                 }
             }
         }
