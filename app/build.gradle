@@ -44,6 +44,12 @@ dependencies {
     implementation 'org.greenrobot:greendao:3.2.2'
     // GreenDao 生成dao和model的generator的项目 发布时可以去掉
     implementation 'org.greenrobot:greendao-generator:3.2.2'
+
+    // 二维码扫描zxing
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
+    implementation 'com.android.support:appcompat-v7:25.3.1'   // Minimum 23+ is required
+
+    compile 'com.mylhyl:zxingscanner:2.1.6'
 }
 
 buildscript {

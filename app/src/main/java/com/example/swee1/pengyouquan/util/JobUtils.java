@@ -27,13 +27,15 @@ public class JobUtils {
         }
     }
 
-    public static void export(final String url, final List<FriendBean> friends) {
+    public static boolean export(final String url, final List<FriendBean> friends) {
         try {
             String resp = HttpUtils.post(url, JSON.toJSONBytes(friends), false);
             PrintUtils.log("export friend response", resp);
+            return true;
         } catch (Exception e) {
             PrintUtils.log("error", "export friend error, msg: " + NodeUtils.getStackTraceInfo(e));
         }
+        return false;
     }
 
     public static Job getJob() {

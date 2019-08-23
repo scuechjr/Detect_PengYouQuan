@@ -15,7 +15,6 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.swee1.pengyouquan.domain.FriendBean;
-import com.example.swee1.pengyouquan.domain.Job;
 import com.example.swee1.pengyouquan.service.FriendService;
 import com.example.swee1.pengyouquan.util.JobUtils;
 
@@ -46,6 +45,8 @@ public class ContactActivity extends AppCompatActivity {
         data.clear();
         data.addAll(dataAdapter(FriendService.getInstance().queryAll()));
         simpleAdapter.notifyDataSetChanged();
+
+        export(OptionsScannerActivity.getScannerResult(getIntent()));
     }
 
     private List<Map<String, Object>> dataAdapter(List<FriendBean> list) {
@@ -97,6 +98,9 @@ public class ContactActivity extends AppCompatActivity {
             case R.id.action_export:
                 showInputParamsDialog();
                 return true;
+            case R.id.action_export_by_scan:
+                OptionsScannerActivity.gotoActivity(ContactActivity.this);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -126,10 +130,21 @@ public class ContactActivity extends AppCompatActivity {
                 } else {
                     EDIT_URL_SB.setLength(0);
                     EDIT_URL_SB.append(url);
-                    JobUtils.export(editUrl.getText().toString(), orginData);
+                    export(url);
                 }
             }
         });
         exportDialog.show();
+    }
+
+    private void export(String exportUrl) {
+        if(null == exportUrl) {
+            return;
+        }
+        if (JobUtils.export(exportUrl, orginData)) {
+            Toast.makeText(this, "数据导出完成！", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "数据导出异常！", Toast.LENGTH_LONG).show();
+        }
     }
 }

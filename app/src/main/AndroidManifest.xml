@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.swee1.pengyouquan">
 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application
+        android:hardwareAccelerated="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -15,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ContactActivity" android:parentActivityName=".MainActivity"/>
+        <activity android:name=".OptionsScannerActivity" android:parentActivityName=".ContactActivity"/>
         <service
             android:name="com.example.swee1.pengyouquan.MyAccessibilityService"
             android:enabled="true"
