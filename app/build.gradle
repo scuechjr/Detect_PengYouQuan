@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 25
@@ -20,6 +21,12 @@ android {
     packagingOptions {
         pickFirst 'META-INF/*'
     }
+    // greendao 配置
+    greendao {
+        schemaVersion 1                                         // 数据库版本号
+        daoPackage      'org.cvte.research.faceapi.greendao'    // greenDao 自动生成的代码保存的包名
+        targetGenDir    'src/main/java'                         // 自动生成的代码存储的路径，默认是 build/generated/source/greendao.
+    }
 
 }
 
@@ -33,6 +40,10 @@ dependencies {
     compile "joda-time:joda-time:2.2"
     compile "org.springframework.android:spring-android-rest-template:1.0.1.RELEASE"
     testCompile 'junit:junit:4.12'
+    // GreenDao  数据库ORM
+    implementation 'org.greenrobot:greendao:3.2.2'
+    // GreenDao 生成dao和model的generator的项目 发布时可以去掉
+    implementation 'org.greenrobot:greendao-generator:3.2.2'
 }
 
 buildscript {
@@ -43,6 +54,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.2'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
 
 
         // NOTE: Do not place your application dependencies here; they belong

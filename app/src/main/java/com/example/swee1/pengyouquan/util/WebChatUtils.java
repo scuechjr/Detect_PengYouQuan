@@ -3,6 +3,7 @@ package com.example.swee1.pengyouquan.util;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.example.swee1.pengyouquan.domain.Friend;
+import com.example.swee1.pengyouquan.domain.FriendBean;
 import com.example.swee1.pengyouquan.domain.NodeDetail;
 
 public class WebChatUtils {
@@ -62,8 +63,8 @@ public class WebChatUtils {
         NodeUtils.click(node);
     }
 
-    public static Friend parseFriendFromXiangQing() {
-        Friend friend = new Friend();
+    public static FriendBean parseFriendFromXiangQing() {
+        FriendBean friend = new FriendBean();
         if (WebChatUtils.waitPageInit(WebChatUtils.XIANG_QING,3000)) {
             NodeDetail join = NodeUtils.joinChildNode(NodeUtils.getRoot());
             if (null != join) {
@@ -89,7 +90,7 @@ public class WebChatUtils {
                             friend.setNickName(part.substring("昵称:".length()).trim());
                         }
                         if (null != part && part.indexOf("微信号:") != -1) {
-                            friend.setId(part.substring("微信号:".length()).trim());
+                            friend.setUserId(part.substring("微信号:".length()).trim());
                         }
                         if (null != part && part.indexOf("地区:") != -1) {
                             friend.setAddress(part.substring("地区:".length()).trim());
@@ -101,8 +102,8 @@ public class WebChatUtils {
         return friend;
     }
 
-    public static Friend parseFriendFromPengYouQuan() {
-        Friend friend = new Friend();
+    public static FriendBean parseFriendFromPengYouQuan() {
+        FriendBean friend = new FriendBean();
         if (WebChatUtils.waitPageInit(WebChatUtils.PENG_YOU_QUAN,3000)) {
             friend.setPengYouQuanContent(NodeUtils.clearNode(NodeUtils.getRoot()).toJSONString());
             AccessibilityNodeInfo listViewNode = NodeUtils.findNodeByClassName("android.widget.ListView");

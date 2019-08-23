@@ -7,10 +7,10 @@ import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.example.swee1.pengyouquan.domain.Friend;
+import com.example.swee1.pengyouquan.dao.PengYouQuanDao;
+import com.example.swee1.pengyouquan.domain.FriendBean;
 import com.example.swee1.pengyouquan.domain.Job;
 import com.example.swee1.pengyouquan.domain.JobContext;
 import com.example.swee1.pengyouquan.domain.JobParams;
@@ -18,7 +18,6 @@ import com.example.swee1.pengyouquan.domain.NodeDetail;
 import com.example.swee1.pengyouquan.domain.enums.JobTypeEnum;
 import com.example.swee1.pengyouquan.util.JobUtils;
 import com.example.swee1.pengyouquan.util.NodeUtils;
-import com.example.swee1.pengyouquan.util.SystemUtils;
 import com.example.swee1.pengyouquan.util.WebChatUtils;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ import java.util.concurrent.Executors;
 public class MyAccessibilityService extends AccessibilityService {
     private static MyAccessibilityService instance;
     private String listViewId = "com.tencent.mm:id/nn";  // ListView
-    private String friendNickNameId = "com.tencent.mm:id/ol"; // 通讯录，朋友昵称
+    private String FriendBeanNickNameId = "com.tencent.mm:id/ol"; // 通讯录，朋友昵称
     private JobContext context = new JobContext();
     private static final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
@@ -42,6 +41,7 @@ public class MyAccessibilityService extends AccessibilityService {
         //当启动服务的时候就会被调用
         super.onServiceConnected();
         PrintUtils.log("start", "onServiceConnected2");
+        PengYouQuanDao.initDatabase(this);
         getJob();
     }
 
@@ -91,16 +91,16 @@ public class MyAccessibilityService extends AccessibilityService {
 
         AccessibilityNodeInfo list = NodeUtils.blockFindNodeById(listViewId, 100000);
         int len = list.getChildCount();
-        List<AccessibilityNodeInfo> friendList = new ArrayList<>();
+        List<AccessibilityNodeInfo> FriendBeanList = new ArrayList<>();
 
         for (int i = 0; i < len && context.isRun(); i++) {
-            friendList.add(list.getChild(i));
+            FriendBeanList.add(list.getChild(i));
 //            Toast.makeText(this, "扫描中...", Toast.LENGTH_LONG).show();
         }
-        for (int i = 0; i < friendList.size() && context.isRun(); i++) {
-            AccessibilityNodeInfo clickNode = friendList.get(i);
+        for (int i = 0; i < FriendBeanList.size() && context.isRun(); i++) {
+            AccessibilityNodeInfo clickNode = FriendBeanList.get(i);
             if (null != clickNode) {
-                AccessibilityNodeInfo markNameNode = NodeUtils.findNodeById(clickNode, friendNickNameId);
+                AccessibilityNodeInfo markNameNode = NodeUtils.findNodeById(clickNode, FriendBeanNickNameId);
                 if (null == markNameNode) {
                     PrintUtils.log("[visitTongXunLu] pass node", NodeUtils.joinChildNode(clickNode).getText());
                     continue;
@@ -110,9 +110,9 @@ public class MyAccessibilityService extends AccessibilityService {
                     context.setFirstCatLastVisitMarkName(true);
                     PrintUtils.log("[visitTongXunLu] 点击账号节点: " + markName);
                     NodeUtils.click(clickNode);
-                    Friend friend = visitXiangQing();
-                    friend.setMarkName(markName);
-                    JobUtils.saveFriend(friend);
+                    FriendBean FriendBean = visitXiangQing();
+                    FriendBean.setMarkName(markName);
+                    JobUtils.saveFriend(FriendBean);
                 }
             }
         }
@@ -131,8 +131,8 @@ public class MyAccessibilityService extends AccessibilityService {
             if (null != join && null != join.getText()) {
                 PrintUtils.log(join.toJSONString());
                 if (join.getText().indexOf("位联系人") != -1) {
-//                    Toast.makeText(this, "扫描完毕，请关闭服务后到主界面查看结果", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS); // 跳转到辅助功能设置页
+                    Intent intent = new Intent(this, MainActivity.class); // 跳转到辅助功能设置页
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     return false;
                 }
@@ -147,19 +147,19 @@ public class MyAccessibilityService extends AccessibilityService {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private Friend visitXiangQing() {
+    private FriendBean visitXiangQing() {
         WebChatUtils.waitPageInit(WebChatUtils.XIANG_QING, 3000);
         PrintUtils.log("[visitXiangQing] 详情页", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
 
-        Friend friend = WebChatUtils.parseFriendFromXiangQing();
+        FriendBean FriendBean = WebChatUtils.parseFriendFromXiangQing();
         // 访问朋友圈
         PrintUtils.log("[visitXiangQing] visitXiangQing", NodeUtils.joinChildNode(NodeUtils.getRoot()).getText());
-        if (!friend.isDeleted()) {
+        if (!FriendBean.isDeleted()) {
             AccessibilityNodeInfo node = NodeUtils.findNodeByText("朋友圈");
             NodeUtils.click(node);
 
             if (WebChatUtils.waitPageInit(WebChatUtils.PENG_YOU_QUAN, 5000)) {
-                friend = friend.extend(WebChatUtils.parseFriendFromPengYouQuan());
+                FriendBean = FriendBean.extend(WebChatUtils.parseFriendFromPengYouQuan());
                 WebChatUtils.back();
                 WebChatUtils.waitPageInit(WebChatUtils.XIANG_QING, 3000);
             } else {
@@ -175,48 +175,48 @@ public class MyAccessibilityService extends AccessibilityService {
         }
 
         if (WebChatUtils.XIANG_QING.equals(WebChatUtils.getCurrentPage())) {
-            PrintUtils.log("[visitXiangQing] friend", friend.toJSONString());
-            if (context.isDeleteForbiddenVisitPengYouQuan() && (friend.isForbiddenVisitPengYouQuan() || friend.isDeleted())) {
-                deleteFriend(context.isDeleteForbiddenVisitPengYouQuan());
+            PrintUtils.log("[visitXiangQing] FriendBean", FriendBean.toJSONString());
+            if (context.isDeleteForbiddenVisitPengYouQuan() && (FriendBean.isForbiddenVisitPengYouQuan() || FriendBean.isDeleted())) {
+                deleteFriendBean(context.isDeleteForbiddenVisitPengYouQuan());
             }
             if (WebChatUtils.XIANG_QING.equals(WebChatUtils.getCurrentPage())) {
                 WebChatUtils.back();
             }
             WebChatUtils.waitPageInit(WebChatUtils.TONG_XUN_LU, 3000);
         }
-        return friend;
+        return FriendBean;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void deleteFriend(boolean confirm) {
+    private void deleteFriendBean(boolean confirm) {
         WebChatUtils.waitPageInit(WebChatUtils.XIANG_QING, 3000);
         if (WebChatUtils.XIANG_QING.equals(WebChatUtils.getCurrentPage())) {
-            PrintUtils.log("[deleteFriend] 详情页", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+            PrintUtils.log("[deleteFriendBean] 详情页", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
             AccessibilityNodeInfo moreBtnNode = NodeUtils.findNodeByClassName("android.widget.ImageButton");
             if (null != moreBtnNode) {
-                PrintUtils.log("[deleteFriend] 更多操作按钮", NodeUtils.toNodeDetail(moreBtnNode).toJSONString());
+                PrintUtils.log("[deleteFriendBean] 更多操作按钮", NodeUtils.toNodeDetail(moreBtnNode).toJSONString());
 
                 NodeUtils.click(moreBtnNode);
                 AccessibilityNodeInfo menuItemNode = NodeUtils.blockFindNodeByText("设为星标朋友", 3000);
-                PrintUtils.log("[deleteFriend] 设置为星标朋友", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+                PrintUtils.log("[deleteFriendBean] 设置为星标朋友", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
 
                 NodeUtils.scrollForward(menuItemNode);
                 AccessibilityNodeInfo deleteMenuItemNode = NodeUtils.blockFindNodeByText("删除", 3000);
-                PrintUtils.log("[deleteFriend] 点击删除菜单项", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+                PrintUtils.log("[deleteFriendBean] 点击删除菜单项", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
                 NodeUtils.click(deleteMenuItemNode);
 
                 NodeUtils.blockFindNodeByText("删除联系人", 3000);
                 if (confirm) {
                     AccessibilityNodeInfo confirmNode = NodeUtils.blockFindClickNodeByText("删除", 3000);
-                    PrintUtils.log("[deleteFriend] 点击确认删除", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+                    PrintUtils.log("[deleteFriendBean] 点击确认删除", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
                     NodeUtils.click(confirmNode);
                 } else {
                     AccessibilityNodeInfo confirmNode = NodeUtils.blockFindClickNodeByText("取消", 3000);
-                    PrintUtils.log("[deleteFriend] 点击确认取消", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+                    PrintUtils.log("[deleteFriendBean] 点击确认取消", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
                     NodeUtils.click(confirmNode);
                 }
             } else {
-                PrintUtils.log("[deleteFriend] 更多操作按钮", "can not fine more menu button! ");
+                PrintUtils.log("[deleteFriendBean] 更多操作按钮", "can not fine more menu button! ");
             }
         }
     }
