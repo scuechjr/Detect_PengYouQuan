@@ -62,7 +62,7 @@ public class ContactActivity extends AppCompatActivity {
                 item.put("contactName", contact.getNickName() + "(" + contact.getUserId() + ")");
             }
             item.put("deletedDesc", contact.isForbiddenVisitPengYouQuan() ? "屏蔽" : "开放");
-            item.put("desc", null != contact.getDesc() ? contact.getDesc() : "友谊小船还在继续...");
+            item.put("desc", null != contact.getPengYouQuanDayLimitDesc() ? contact.getPengYouQuanDayLimitDesc() : "友谊小船还在继续...");
 
             data.add(item);
         }
