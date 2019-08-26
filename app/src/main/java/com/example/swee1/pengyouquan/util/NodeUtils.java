@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.example.swee1.pengyouquan.MyAccessibilityService;
-import com.example.swee1.pengyouquan.PrintUtils;
 import com.example.swee1.pengyouquan.domain.NodeDetail;
 import com.example.swee1.pengyouquan.domain.enums.DataTypeEnum;
 
@@ -154,7 +153,7 @@ public class NodeUtils {
         if (null != scrollNode) {
             scrollNode.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
         } else {
-            PrintUtils.log("error", "The node can not scroll forward!");
+            Log.i("error", "The node can not scroll forward!");
         }
     }
 
@@ -180,7 +179,7 @@ public class NodeUtils {
         if (null != clickNode) {
             clickNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
         } else {
-            PrintUtils.log("error", "The node can not click!");
+            Log.i("error", "The node can not click!");
         }
     }
 
@@ -233,7 +232,7 @@ public class NodeUtils {
                 return node;
             }
             sleep(INTERVAL);
-            PrintUtils.log(text + " block find time " + (i + 1));
+            Log.i(text + " block find time " + (i + 1));
         }
         return null;
     }
@@ -352,7 +351,7 @@ public class NodeUtils {
                 return node;
             }
             sleep(INTERVAL);
-            PrintUtils.log(i + "");
+            Log.i(i + "");
         }
         return null;
     }
@@ -696,31 +695,5 @@ public class NodeUtils {
         try {
             Thread.sleep(millis);
         } catch (Exception e) {}
-    }
-
-    public static String getStackTraceInfo(Exception e) {
-        StringWriter sw = null;
-        PrintWriter pw = null;
-        try {
-            sw = new StringWriter();
-            pw = new PrintWriter(sw);
-            e.printStackTrace(pw); // 将出错的栈信息输出到printWriter中
-            pw.flush();
-            sw.flush();
-            return sw.toString();
-        } catch (Exception ex) {
-            return "发生错误";
-        } finally {
-            if (sw != null) {
-                try {
-                    sw.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            if (pw != null) {
-                pw.close();
-            }
-        }
     }
 }

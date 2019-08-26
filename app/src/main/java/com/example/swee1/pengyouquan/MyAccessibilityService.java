@@ -3,21 +3,22 @@ package com.example.swee1.pengyouquan;
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.alibaba.fastjson.JSON;
 import com.example.swee1.pengyouquan.dao.PengYouQuanDao;
-import com.example.swee1.pengyouquan.domain.FriendBean;
+import com.example.swee1.pengyouquan.domain.Contact;
 import com.example.swee1.pengyouquan.domain.Job;
 import com.example.swee1.pengyouquan.domain.JobContext;
 import com.example.swee1.pengyouquan.domain.JobParams;
 import com.example.swee1.pengyouquan.domain.NodeDetail;
 import com.example.swee1.pengyouquan.domain.enums.JobTypeEnum;
 import com.example.swee1.pengyouquan.util.JobUtils;
+import com.example.swee1.pengyouquan.util.Log;
 import com.example.swee1.pengyouquan.util.NodeUtils;
+import com.example.swee1.pengyouquan.util.SystemUtils;
 import com.example.swee1.pengyouquan.util.WebChatUtils;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import java.util.concurrent.Executors;
 public class MyAccessibilityService extends AccessibilityService {
     private static MyAccessibilityService instance;
     private String listViewId = "com.tencent.mm:id/nn";  // ListView
-    private String FriendBeanNickNameId = "com.tencent.mm:id/ol"; // 通讯录，朋友昵称
+    private String ContactNickNameId = "com.tencent.mm:id/ol"; // 通讯录，朋友昵称
     private JobContext context = new JobContext();
     private static final ExecutorService executorService = Executors.newFixedThreadPool(2);
 
@@ -40,7 +41,7 @@ public class MyAccessibilityService extends AccessibilityService {
     protected void onServiceConnected() {
         //当启动服务的时候就会被调用
         super.onServiceConnected();
-        PrintUtils.log("start", "onServiceConnected2");
+        Log.i("start", "onServiceConnected2");
         PengYouQuanDao.initDatabase(this);
         getJob();
     }
@@ -59,7 +60,7 @@ public class MyAccessibilityService extends AccessibilityService {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    PrintUtils.log("[onAccessibilityEvent] main", "开始处理");
+                    Log.i("[onAccessibilityEvent] main", "开始处理");
                     AccessibilityNodeInfo node = NodeUtils.findNodeByText("通讯录");
                     if (null != node) {
                         NodeUtils.click(node);
@@ -71,12 +72,12 @@ public class MyAccessibilityService extends AccessibilityService {
                                 }
                             }
                         } catch (Exception e) {
-                            PrintUtils.log("[onAccessibilityEvent] main", "异常退出，msg: " + NodeUtils.getStackTraceInfo(e));
+                            Log.i("[onAccessibilityEvent] main", "异常退出，msg: " + SystemUtils.getStackTraceInfo(e));
                         }
                     } else {
-                        PrintUtils.log("[onAccessibilityEvent] error", "未获取通讯录节点");
+                        Log.i("[onAccessibilityEvent] error", "未获取通讯录节点");
                     }
-                    PrintUtils.log("[onAccessibilityEvent] main", "处理完成");
+                    Log.i("[onAccessibilityEvent] main", "处理完成");
                 }
             };
             executorService.execute(runnable);
@@ -91,28 +92,28 @@ public class MyAccessibilityService extends AccessibilityService {
 
         AccessibilityNodeInfo list = NodeUtils.blockFindNodeById(listViewId, 100000);
         int len = list.getChildCount();
-        List<AccessibilityNodeInfo> FriendBeanList = new ArrayList<>();
+        List<AccessibilityNodeInfo> ContactList = new ArrayList<>();
 
         for (int i = 0; i < len && context.isRun(); i++) {
-            FriendBeanList.add(list.getChild(i));
+            ContactList.add(list.getChild(i));
 //            Toast.makeText(this, "扫描中...", Toast.LENGTH_LONG).show();
         }
-        for (int i = 0; i < FriendBeanList.size() && context.isRun(); i++) {
-            AccessibilityNodeInfo clickNode = FriendBeanList.get(i);
+        for (int i = 0; i < ContactList.size() && context.isRun(); i++) {
+            AccessibilityNodeInfo clickNode = ContactList.get(i);
             if (null != clickNode) {
-                AccessibilityNodeInfo markNameNode = NodeUtils.findNodeById(clickNode, FriendBeanNickNameId);
+                AccessibilityNodeInfo markNameNode = NodeUtils.findNodeById(clickNode, ContactNickNameId);
                 if (null == markNameNode) {
-                    PrintUtils.log("[visitTongXunLu] pass node", NodeUtils.joinChildNode(clickNode).getText());
+                    Log.i("[visitTongXunLu] pass node", NodeUtils.joinChildNode(clickNode).getText());
                     continue;
                 }
                 String markName = NodeUtils.joinChildNode(clickNode).getText();
                 if (context.isFirstCatLastVisitMarkName() || (null != markName && markName.indexOf(context.getLastVisitMarkName()) == 0)) {
                     context.setFirstCatLastVisitMarkName(true);
-                    PrintUtils.log("[visitTongXunLu] 点击账号节点: " + markName);
+                    Log.i("[visitTongXunLu] 点击账号节点: " + markName);
                     NodeUtils.click(clickNode);
-                    FriendBean FriendBean = visitXiangQing();
-                    FriendBean.setMarkName(markName);
-                    JobUtils.saveFriend(FriendBean);
+                    Contact Contact = visitXiangQing();
+                    Contact.setMarkName(markName);
+                    JobUtils.saveContact(Contact);
                 }
             }
         }
@@ -129,7 +130,7 @@ public class MyAccessibilityService extends AccessibilityService {
         if (WebChatUtils.TONG_XUN_LU.equals(WebChatUtils.getCurrentPage())) {
             NodeDetail join = NodeUtils.joinChildNode(NodeUtils.getRoot());
             if (null != join && null != join.getText()) {
-                PrintUtils.log(join.toJSONString());
+                Log.i(join.toJSONString());
                 if (join.getText().indexOf("位联系人") != -1) {
                     Intent intent = new Intent(this, MainActivity.class); // 跳转到辅助功能设置页
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -137,7 +138,7 @@ public class MyAccessibilityService extends AccessibilityService {
                     return false;
                 }
             }
-            PrintUtils.log("[visitTongXunLu] 页面信息", "向下滚动通讯录");
+            Log.i("[visitTongXunLu] 页面信息", "向下滚动通讯录");
             NodeUtils.scrollForward(list);
             NodeUtils.sleep(NodeUtils.INTERVAL);
             return true;
@@ -147,19 +148,19 @@ public class MyAccessibilityService extends AccessibilityService {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private FriendBean visitXiangQing() {
+    private Contact visitXiangQing() {
         WebChatUtils.waitPageInit(WebChatUtils.XIANG_QING, 3000);
-        PrintUtils.log("[visitXiangQing] 详情页", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+        Log.i("[visitXiangQing] 详情页", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
 
-        FriendBean FriendBean = WebChatUtils.parseFriendFromXiangQing();
+        Contact contact = WebChatUtils.parseContactFromXiangQing();
         // 访问朋友圈
-        PrintUtils.log("[visitXiangQing] visitXiangQing", NodeUtils.joinChildNode(NodeUtils.getRoot()).getText());
-        if (!FriendBean.isDeleted()) {
+        Log.i("[visitXiangQing] visitXiangQing", NodeUtils.joinChildNode(NodeUtils.getRoot()).getText());
+        if (!contact.isDeleted()) {
             AccessibilityNodeInfo node = NodeUtils.findNodeByText("朋友圈");
             NodeUtils.click(node);
 
             if (WebChatUtils.waitPageInit(WebChatUtils.PENG_YOU_QUAN, 5000)) {
-                FriendBean = FriendBean.extend(WebChatUtils.parseFriendFromPengYouQuan());
+                contact = contact.extend(WebChatUtils.parseContactFromPengYouQuan());
                 WebChatUtils.back();
                 WebChatUtils.waitPageInit(WebChatUtils.XIANG_QING, 3000);
             } else {
@@ -168,55 +169,55 @@ public class MyAccessibilityService extends AccessibilityService {
                     WebChatUtils.back();
                     WebChatUtils.waitPageInit(WebChatUtils.XIANG_QING, 3000);
                 } else {
-                    PrintUtils.log("[visitXiangQing] can not visit peng you quan!");
-                    PrintUtils.log("[visitXiangQing] current page content", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+                    Log.i("[visitXiangQing] can not visit peng you quan!");
+                    Log.i("[visitXiangQing] current page content", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
                 }
             }
         }
 
         if (WebChatUtils.XIANG_QING.equals(WebChatUtils.getCurrentPage())) {
-            PrintUtils.log("[visitXiangQing] FriendBean", FriendBean.toJSONString());
-            if (context.isDeleteForbiddenVisitPengYouQuan() && (FriendBean.isForbiddenVisitPengYouQuan() || FriendBean.isDeleted())) {
-                deleteFriendBean(context.isDeleteForbiddenVisitPengYouQuan());
+            Log.i("[visitXiangQing] Contact", contact.toJSONString());
+            if (context.isDeleteForbiddenVisitPengYouQuan() && (contact.isForbiddenVisitPengYouQuan() || contact.isDeleted())) {
+                deleteContact(context.isDeleteForbiddenVisitPengYouQuan());
             }
             if (WebChatUtils.XIANG_QING.equals(WebChatUtils.getCurrentPage())) {
                 WebChatUtils.back();
             }
             WebChatUtils.waitPageInit(WebChatUtils.TONG_XUN_LU, 3000);
         }
-        return FriendBean;
+        return contact;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private void deleteFriendBean(boolean confirm) {
+    private void deleteContact(boolean confirm) {
         WebChatUtils.waitPageInit(WebChatUtils.XIANG_QING, 3000);
         if (WebChatUtils.XIANG_QING.equals(WebChatUtils.getCurrentPage())) {
-            PrintUtils.log("[deleteFriendBean] 详情页", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+            Log.i("[deleteContact] 详情页", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
             AccessibilityNodeInfo moreBtnNode = NodeUtils.findNodeByClassName("android.widget.ImageButton");
             if (null != moreBtnNode) {
-                PrintUtils.log("[deleteFriendBean] 更多操作按钮", NodeUtils.toNodeDetail(moreBtnNode).toJSONString());
+                Log.i("[deleteContact] 更多操作按钮", NodeUtils.toNodeDetail(moreBtnNode).toJSONString());
 
                 NodeUtils.click(moreBtnNode);
                 AccessibilityNodeInfo menuItemNode = NodeUtils.blockFindNodeByText("设为星标朋友", 3000);
-                PrintUtils.log("[deleteFriendBean] 设置为星标朋友", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+                Log.i("[deleteContact] 设置为星标朋友", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
 
                 NodeUtils.scrollForward(menuItemNode);
                 AccessibilityNodeInfo deleteMenuItemNode = NodeUtils.blockFindNodeByText("删除", 3000);
-                PrintUtils.log("[deleteFriendBean] 点击删除菜单项", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+                Log.i("[deleteContact] 点击删除菜单项", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
                 NodeUtils.click(deleteMenuItemNode);
 
                 NodeUtils.blockFindNodeByText("删除联系人", 3000);
                 if (confirm) {
                     AccessibilityNodeInfo confirmNode = NodeUtils.blockFindClickNodeByText("删除", 3000);
-                    PrintUtils.log("[deleteFriendBean] 点击确认删除", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+                    Log.i("[deleteContact] 点击确认删除", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
                     NodeUtils.click(confirmNode);
                 } else {
                     AccessibilityNodeInfo confirmNode = NodeUtils.blockFindClickNodeByText("取消", 3000);
-                    PrintUtils.log("[deleteFriendBean] 点击确认取消", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
+                    Log.i("[deleteContact] 点击确认取消", NodeUtils.joinChildNode(NodeUtils.getRoot()).toJSONString());
                     NodeUtils.click(confirmNode);
                 }
             } else {
-                PrintUtils.log("[deleteFriendBean] 更多操作按钮", "can not fine more menu button! ");
+                Log.i("[deleteContact] 更多操作按钮", "can not fine more menu button! ");
             }
         }
     }
@@ -254,7 +255,7 @@ public class MyAccessibilityService extends AccessibilityService {
                     try {
                         updateJob();
                     } catch (Exception e) {
-                        PrintUtils.log("error", "更新任务异常，msg: " + NodeUtils.getStackTraceInfo(e));
+                        Log.i("error", "更新任务异常，msg: " + SystemUtils.getStackTraceInfo(e));
                     }
                     NodeUtils.sleep(context.getScheduleInterval());
                 }
@@ -270,21 +271,21 @@ public class MyAccessibilityService extends AccessibilityService {
                             JobParams params = job.getParams();
                             if (null != params.getLastVisitMarkName()) {
                                 context.setLastVisitMarkName(params.getLastVisitMarkName());
-                                PrintUtils.log("new job", "start with " + params.getLastVisitMarkName());
+                                Log.i("new job", "start with " + params.getLastVisitMarkName());
                             }
                             context.setDeleteForbiddenVisitPengYouQuan(params.isDeleteForbiddenVisitPengYouQuan());
                         } else {
-                            PrintUtils.log("new job", "start");
+                            Log.i("new job", "start");
                         }
                         context.setRun(true);
                     } else if (JobTypeEnum.STOP.getValue() == job.getType()) {
                         context.setScheduleInterval(5000);
                         context.setRun(false);
                         context.setRunning(false);
-                        PrintUtils.log("new job", "stop");
+                        Log.i("new job", "stop");
                     }
                 }
-                PrintUtils.log("context", JSON.toJSONString(context));
+                Log.i("context", JSON.toJSONString(context));
             }
         };
         executorService.execute(runnable);

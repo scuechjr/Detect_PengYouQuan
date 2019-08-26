@@ -15,13 +15,14 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.swee1.pengyouquan.dao.PengYouQuanDao;
-import com.example.swee1.pengyouquan.domain.ConfigBean;
+import com.example.swee1.pengyouquan.domain.Config;
 import com.example.swee1.pengyouquan.domain.enums.JobTypeEnum;
 import com.example.swee1.pengyouquan.service.ConfigService;
+import com.example.swee1.pengyouquan.util.Log;
 
 public class MainActivity extends AppCompatActivity {
     public static boolean saveExistingData = false;
-    private ConfigBean config = new ConfigBean();
+    private Config config = new Config();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         config = ConfigService.getInstance().getFirst();
         if (null == config) {
-            config = new ConfigBean();
+            config = new Config();
         } else {
             // 朋友圈检查需要在微信页面下操作，如果打开检查器，说明已经退出微信页面，所以默认停止检测
             config.setType(JobTypeEnum.STOP.getValue());
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     ConfigService.getInstance().update(config);
                 }
-                PrintUtils.log("save", config.toJSONString());
+                Log.i("save", config.toJSONString());
                 Toast.makeText(MainActivity.this, "修改保存成功", Toast.LENGTH_LONG).show();
             }
         });
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViewData() {
-        PrintUtils.log("get", config.toJSONString());
+        Log.i("get", config.toJSONString());
         startMarkNameEdit.setText(config.getStartMarkName());
         delFlagSwitch.setChecked(config.getDeleteForbiddenVisitPengYouQuan());
         runFlagSwitch.setChecked(config.getRun());

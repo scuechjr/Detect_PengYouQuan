@@ -1,9 +1,9 @@
 package com.example.swee1.pengyouquan.service;
 
 import com.example.swee1.pengyouquan.dao.PengYouQuanDao;
-import com.example.swee1.pengyouquan.domain.ConfigBean;
+import com.example.swee1.pengyouquan.domain.Config;
 
-import org.cvte.research.faceapi.greendao.ConfigBeanDao;
+import org.cvte.research.faceapi.greendao.ConfigDao;
 
 public class ConfigService {
     private static Object lock = new Object();
@@ -20,25 +20,25 @@ public class ConfigService {
         return instance;
     }
 
-    public void add(ConfigBean bean) {
+    public void add(Config bean) {
         PengYouQuanDao.getDaoSession().insert(bean);
     }
 
-    public void update(ConfigBean bean) {
+    public void update(Config bean) {
         PengYouQuanDao.getDaoSession().update(bean);
     }
 
-    public ConfigBean getById(Long id) {
+    public Config getById(Long id) {
         return PengYouQuanDao.getDaoSession()
-                .getConfigBeanDao()
+                .getConfigDao()
                 .queryBuilder()
-                .where(ConfigBeanDao.Properties.Id.eq(id))
+                .where(ConfigDao.Properties.Id.eq(id))
                 .unique();
     }
 
-    public ConfigBean getFirst() {
+    public Config getFirst() {
         return PengYouQuanDao.getDaoSession()
-                .getConfigBeanDao()
+                .getConfigDao()
                 .queryBuilder()
                 .unique();
     }

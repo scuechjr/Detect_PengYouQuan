@@ -2,8 +2,7 @@ package com.example.swee1.pengyouquan.util;
 
 import android.view.accessibility.AccessibilityNodeInfo;
 
-import com.example.swee1.pengyouquan.domain.Friend;
-import com.example.swee1.pengyouquan.domain.FriendBean;
+import com.example.swee1.pengyouquan.domain.Contact;
 import com.example.swee1.pengyouquan.domain.NodeDetail;
 
 public class WebChatUtils {
@@ -63,49 +62,49 @@ public class WebChatUtils {
         NodeUtils.click(node);
     }
 
-    public static FriendBean parseFriendFromXiangQing() {
-        FriendBean friend = new FriendBean();
+    public static Contact parseContactFromXiangQing() {
+        Contact contact = new Contact();
         if (WebChatUtils.waitPageInit(WebChatUtils.XIANG_QING,3000)) {
             NodeDetail join = NodeUtils.joinChildNode(NodeUtils.getRoot());
             if (null != join) {
                 String xiangQingContent = join.toJSONString();
-                friend.setXiangQingContent(xiangQingContent);
+                contact.setXiangQingContent(xiangQingContent);
                 if (null != xiangQingContent) {
                     String[] parts = xiangQingContent.split(",");
                     for (int i = 1; i < parts.length; i++) {
                         if (null != parts[i-1] && "电话号码".equals(parts[i-1])) {
-                            friend.setPhone(parts[i]);
+                            contact.setPhone(parts[i]);
                             break;
                         }
                     }
                 }
                 if (null != join.getText()) {
                     if (join.getText().indexOf("对方已经删除帐号") != -1) {
-                        friend.setDeleted(true);
-                        friend.setDesc("对方已经删除帐号");
+                        contact.setDeleted(true);
+                        contact.setDesc("对方已经删除帐号");
                     }
                     String[] parts = join.getText().split(",");
                     for (String part : parts) {
                         if (null != part && part.indexOf("昵称:") != -1) {
-                            friend.setNickName(part.substring("昵称:".length()).trim());
+                            contact.setNickName(part.substring("昵称:".length()).trim());
                         }
                         if (null != part && part.indexOf("微信号:") != -1) {
-                            friend.setUserId(part.substring("微信号:".length()).trim());
+                            contact.setUserId(part.substring("微信号:".length()).trim());
                         }
                         if (null != part && part.indexOf("地区:") != -1) {
-                            friend.setAddress(part.substring("地区:".length()).trim());
+                            contact.setAddress(part.substring("地区:".length()).trim());
                         }
                     }
                 }
             }
         }
-        return friend;
+        return contact;
     }
 
-    public static FriendBean parseFriendFromPengYouQuan() {
-        FriendBean friend = new FriendBean();
+    public static Contact parseContactFromPengYouQuan() {
+        Contact contact = new Contact();
         if (WebChatUtils.waitPageInit(WebChatUtils.PENG_YOU_QUAN,3000)) {
-            friend.setPengYouQuanContent(NodeUtils.clearNode(NodeUtils.getRoot()).toJSONString());
+            contact.setPengYouQuanContent(NodeUtils.clearNode(NodeUtils.getRoot()).toJSONString());
             AccessibilityNodeInfo listViewNode = NodeUtils.findNodeByClassName("android.widget.ListView");
             if (null != listViewNode && listViewNode.getChildCount() < 3) {
                 NodeDetail join = NodeUtils.joinChildNode(listViewNode);
@@ -113,17 +112,17 @@ public class WebChatUtils {
                 String[] contentDescParts = join.getContentDesc().split(",");
                 for (int i = 0; i < contentDescParts.length; i++) {
                     if ("我的头像".equals(contentDescParts[i])) {
-                        friend.setNickName(contentDescParts[i-1]);
+                        contact.setNickName(contentDescParts[i-1]);
                         break;
                     }
                 }
 
                 if (join.getText().indexOf("朋友仅展示最近") != -1) {
-                    friend.setForbiddenVisitPengYouQuan(false);
+                    contact.setForbiddenVisitPengYouQuan(false);
                     String[] textParts = join.getText().split(",");
                     for (int i = 0; i < textParts.length; i++) {
                         if (textParts[i].indexOf("朋友仅展示最近") != -1) {
-                            friend.setPengYouQuanDayLimitDesc(textParts[i]);
+                            contact.setPengYouQuanDayLimitDesc(textParts[i]);
                             break;
                         }
                     }
@@ -132,15 +131,15 @@ public class WebChatUtils {
                 if (listViewNode.getChildCount() == 2) {
                     NodeDetail childJoin = NodeUtils.joinChildNode(listViewNode.getChild(1));
                     if (null == childJoin || null == childJoin.getText() || childJoin.getText().length() < 1) {
-                        friend.setForbiddenVisitPengYouQuan(true);
-                        friend.setPengYouQuanDayLimitDesc("朋友圈被屏蔽");
+                        contact.setForbiddenVisitPengYouQuan(true);
+                        contact.setPengYouQuanDayLimitDesc("朋友圈被屏蔽");
                     }
                 } else {
-                    friend.setForbiddenVisitPengYouQuan(true);
-                    friend.setPengYouQuanDayLimitDesc("朋友圈被屏蔽");
+                    contact.setForbiddenVisitPengYouQuan(true);
+                    contact.setPengYouQuanDayLimitDesc("朋友圈被屏蔽");
                 }
             }
         }
-        return friend;
+        return contact;
     }
 }

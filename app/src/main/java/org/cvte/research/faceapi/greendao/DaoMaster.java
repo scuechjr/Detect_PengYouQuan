@@ -21,14 +21,14 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
-        FriendBeanDao.createTable(db, ifNotExists);
-        ConfigBeanDao.createTable(db, ifNotExists);
+        ContactDao.createTable(db, ifNotExists);
+        ConfigDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
-        FriendBeanDao.dropTable(db, ifExists);
-        ConfigBeanDao.dropTable(db, ifExists);
+        ContactDao.dropTable(db, ifExists);
+        ConfigDao.dropTable(db, ifExists);
     }
 
     /**
@@ -47,8 +47,8 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
-        registerDaoClass(FriendBeanDao.class);
-        registerDaoClass(ConfigBeanDao.class);
+        registerDaoClass(ContactDao.class);
+        registerDaoClass(ConfigDao.class);
     }
 
     public DaoSession newSession() {

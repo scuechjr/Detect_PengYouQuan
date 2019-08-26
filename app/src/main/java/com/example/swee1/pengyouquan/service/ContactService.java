@@ -1,62 +1,61 @@
 package com.example.swee1.pengyouquan.service;
 
 import com.example.swee1.pengyouquan.dao.PengYouQuanDao;
-import com.example.swee1.pengyouquan.domain.Friend;
-import com.example.swee1.pengyouquan.domain.FriendBean;
+import com.example.swee1.pengyouquan.domain.Contact;
 
-import org.cvte.research.faceapi.greendao.FriendBeanDao;
+import org.cvte.research.faceapi.greendao.ContactDao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FriendService {
+public class ContactService {
     private static Object lock = new Object();
-    private static FriendService instance;
+    private static ContactService instance;
 
-    public static FriendService getInstance() {
+    public static ContactService getInstance() {
         if (null == instance) {
             synchronized (lock) {
                 if (null == instance) {
-                    instance = new FriendService();
+                    instance = new ContactService();
                 }
             }
         }
         return instance;
     }
 
-    public void add(FriendBean bean) {
+    public void add(Contact bean) {
         PengYouQuanDao.getDaoSession().insert(bean);
     }
 
-    public List<FriendBean> queryAll() {
+    public List<Contact> queryAll() {
         return distinctByUserId(
                 PengYouQuanDao.getDaoSession()
-                .getFriendBeanDao()
+                .getContactDao()
                 .queryBuilder()
-                .orderAsc(FriendBeanDao.Properties.Id)
+                .orderAsc(ContactDao.Properties.Id)
                 .list()
         );
     }
 
-    public List<FriendBean> queryForbidden() {
+    public List<Contact> queryForbidden() {
         return distinctByUserId(
                 PengYouQuanDao.getDaoSession()
-                .getFriendBeanDao()
+                .getContactDao()
                 .queryBuilder()
-                .where(FriendBeanDao.Properties.ForbiddenVisitPengYouQuan.eq(true))
-                .orderAsc(FriendBeanDao.Properties.Id)
+                .where(ContactDao.Properties.ForbiddenVisitPengYouQuan.eq(true))
+                .orderAsc(ContactDao.Properties.Id)
                 .list()
         );
     }
 
-    private List<FriendBean> distinctByUserId(List<FriendBean> list) {
+    private List<Contact> distinctByUserId(List<Contact> list) {
         if (null == list) {
             return list;
         }
-        Map<String, FriendBean> map = new HashMap<>();
-        for (FriendBean item : list) {
+        Map<String, Contact> map = new HashMap<>();
+        for (Contact item : list) {
             map.put(item.getUserId(), item);
         }
         return new ArrayList<>(map.values());

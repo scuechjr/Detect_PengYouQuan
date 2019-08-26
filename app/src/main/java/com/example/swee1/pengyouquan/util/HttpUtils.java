@@ -1,7 +1,6 @@
 package com.example.swee1.pengyouquan.util;
 
 import com.alibaba.fastjson.JSON;
-import com.example.swee1.pengyouquan.PrintUtils;
 
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -54,7 +53,7 @@ public class HttpUtils {
 //                    }
 //                    result.append(sb.toString());
 //                } catch (Exception e) {
-//                    PrintUtils.log("error", "http get error, msg: " + e.getMessage());
+//                    Log.i("error", "http get error, msg: " + e.getMessage());
 //                } finally {
 //                    // 关闭链接
 //                    if (connection != null) {
@@ -67,7 +66,7 @@ public class HttpUtils {
                     restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
                     result.append(restTemplate.getForObject(url, String.class));
                 } catch (Exception e) {
-                    PrintUtils.log("error", "http get error, msg: " + e.getMessage());
+                    Log.i("error", "http get error, msg: " + e.getMessage());
                 }
             }
         };
@@ -130,7 +129,7 @@ public class HttpUtils {
                         result.append(line); // 返回数据拼接
                     }
                 } catch (IOException e) {
-                    PrintUtils.log("error", "http post error, msg: " + e.getMessage());
+                    Log.i("error", "http post error, msg: " + e.getMessage());
                 } finally {
                     if (conn != null) {
                         conn.disconnect(); // 关闭链接
@@ -142,7 +141,7 @@ public class HttpUtils {
 //                    restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
 //                    result.append(restTemplate.postForEntity(url, body, String.class).getBody());
 //                } catch (Exception e) {
-//                    PrintUtils.log("error", "http get error, msg: " + e.getMessage());
+//                    Log.i("error", "http get error, msg: " + e.getMessage());
 //                }
             }
         };

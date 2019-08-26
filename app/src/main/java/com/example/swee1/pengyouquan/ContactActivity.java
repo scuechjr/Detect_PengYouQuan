@@ -14,8 +14,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.example.swee1.pengyouquan.domain.FriendBean;
-import com.example.swee1.pengyouquan.service.FriendService;
+import com.example.swee1.pengyouquan.domain.Contact;
+import com.example.swee1.pengyouquan.service.ContactService;
 import com.example.swee1.pengyouquan.util.JobUtils;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import java.util.Map;
 public class ContactActivity extends AppCompatActivity {
     ListView contactView;
     SimpleAdapter simpleAdapter;
-    List<FriendBean> orginData = new ArrayList<>();
+    List<Contact> orginData = new ArrayList<>();
     List<Map<String, Object>> data = new ArrayList<>();
 
     @Override
@@ -43,18 +43,18 @@ public class ContactActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         data.clear();
-        data.addAll(dataAdapter(FriendService.getInstance().queryAll()));
+        data.addAll(dataAdapter(ContactService.getInstance().queryAll()));
         simpleAdapter.notifyDataSetChanged();
 
         export(OptionsScannerActivity.getScannerResult(getIntent()));
     }
 
-    private List<Map<String, Object>> dataAdapter(List<FriendBean> list) {
+    private List<Map<String, Object>> dataAdapter(List<Contact> list) {
         List<Map<String, Object>> data = new ArrayList<>();
         if (null == data) {
             return data;
         }
-        for (FriendBean contact : list) {
+        for (Contact contact : list) {
             Map<String, Object> item = new HashMap<>();
             if (null != contact.getMarkName()) {
                 item.put("contactName", contact.getMarkName() + "(" + contact.getUserId() + ")");
@@ -85,13 +85,13 @@ public class ContactActivity extends AppCompatActivity {
                 return true;
             case R.id.action_show_forbidden:
                 data.clear();
-                orginData = FriendService.getInstance().queryForbidden();
+                orginData = ContactService.getInstance().queryForbidden();
                 data.addAll(dataAdapter(orginData));
                 simpleAdapter.notifyDataSetChanged();
                 return true;
             case R.id.action_show_all:
                 data.clear();
-                orginData = FriendService.getInstance().queryAll();
+                orginData = ContactService.getInstance().queryAll();
                 data.addAll(dataAdapter(orginData));
                 simpleAdapter.notifyDataSetChanged();
                 return true;

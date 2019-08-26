@@ -8,8 +8,8 @@ import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Unique;
 import org.greenrobot.greendao.annotation.Generated;
 
-@Entity(nameInDb = "friend")
-public class FriendBean {
+@Entity(nameInDb = "contact")
+public class Contact {
     @Id(autoincrement = true)
     @Unique
     @Property(nameInDb = "id")
@@ -37,8 +37,8 @@ public class FriendBean {
     @Property(nameInDb = "xiang_qing_content")
     private String xiangQingContent;
 
-    @Generated(hash = 2077919909)
-    public FriendBean(Long id, String userId, String nickName, String phone, String address, boolean deleted, String desc, String markName,
+    @Generated(hash = 1860455673)
+    public Contact(Long id, String userId, String nickName, String phone, String address, boolean deleted, String desc, String markName,
             boolean forbiddenVisitPengYouQuan, String pengYouQuanDayLimitDesc, String pengYouQuanContent, String xiangQingContent) {
         this.id = id;
         this.userId = userId;
@@ -54,36 +54,36 @@ public class FriendBean {
         this.xiangQingContent = xiangQingContent;
     }
 
-    @Generated(hash = 152145004)
-    public FriendBean() {
+    @Generated(hash = 672515148)
+    public Contact() {
     }
 
-    public FriendBean extend(FriendBean... friends) {
-        FriendBean friend = this.copy(new FriendBean());
-        if (null == friends) {
-            return friend;
+    public Contact extend(Contact... contacts) {
+        Contact contact = this.copy(new Contact());
+        if (null == contacts) {
+            return contact;
         }
 
-        for (FriendBean f : friends) {
-            friend.setId(null != f.getId() ? f.getId() : friend.getId());
-            friend.setUserId(null != f.getUserId() ? f.getUserId() : friend.getUserId());
-            friend.setNickName(null != f.getNickName() ? f.getNickName() : friend.getNickName());
-            friend.setPhone(null != f.getPhone() ? f.getPhone() : friend.getPhone());
-            friend.setAddress(null != f.getAddress() ? f.getAddress() : friend.getAddress());
-            friend.setDeleted(f.isDeleted() ? f.isDeleted() : friend.isDeleted());
-            friend.setDesc(null != f.getDesc() ? f.getDesc() : friend.getDesc());
-            friend.setMarkName(null != f.getMarkName() ? f.getMarkName() : friend.getMarkName());
-            friend.setMarkName(null != f.getMarkName() ? f.getMarkName() : friend.getMarkName());
-            friend.setForbiddenVisitPengYouQuan(f.isForbiddenVisitPengYouQuan() ? f.isForbiddenVisitPengYouQuan() : friend.isForbiddenVisitPengYouQuan());
-            friend.setPengYouQuanDayLimitDesc(null != f.getPengYouQuanDayLimitDesc() ? f.getPengYouQuanDayLimitDesc() : friend.getPengYouQuanDayLimitDesc());
-            friend.setPengYouQuanContent(null != f.getPengYouQuanContent() ? f.getPengYouQuanContent() : friend.getPengYouQuanContent());
-            friend.setXiangQingContent(null != f.getXiangQingContent() ? f.getXiangQingContent() : friend.getXiangQingContent());
+        for (Contact f : contacts) {
+            contact.setId(null != f.getId() ? f.getId() : contact.getId());
+            contact.setUserId(null != f.getUserId() ? f.getUserId() : contact.getUserId());
+            contact.setNickName(null != f.getNickName() ? f.getNickName() : contact.getNickName());
+            contact.setPhone(null != f.getPhone() ? f.getPhone() : contact.getPhone());
+            contact.setAddress(null != f.getAddress() ? f.getAddress() : contact.getAddress());
+            contact.setDeleted(f.isDeleted() ? f.isDeleted() : contact.isDeleted());
+            contact.setDesc(null != f.getDesc() ? f.getDesc() : contact.getDesc());
+            contact.setMarkName(null != f.getMarkName() ? f.getMarkName() : contact.getMarkName());
+            contact.setMarkName(null != f.getMarkName() ? f.getMarkName() : contact.getMarkName());
+            contact.setForbiddenVisitPengYouQuan(f.isForbiddenVisitPengYouQuan() ? f.isForbiddenVisitPengYouQuan() : contact.isForbiddenVisitPengYouQuan());
+            contact.setPengYouQuanDayLimitDesc(null != f.getPengYouQuanDayLimitDesc() ? f.getPengYouQuanDayLimitDesc() : contact.getPengYouQuanDayLimitDesc());
+            contact.setPengYouQuanContent(null != f.getPengYouQuanContent() ? f.getPengYouQuanContent() : contact.getPengYouQuanContent());
+            contact.setXiangQingContent(null != f.getXiangQingContent() ? f.getXiangQingContent() : contact.getXiangQingContent());
         }
 
-        return friend;
+        return contact;
     }
 
-    public <T extends FriendBean> T copy(T bean) {
+    public <T extends Contact> T copy(T bean) {
         bean.setId(getId());
         bean.setUserId(getUserId());
         bean.setNickName(getNickName());
@@ -104,7 +104,7 @@ public class FriendBean {
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -112,7 +112,7 @@ public class FriendBean {
     }
 
     public String getUserId() {
-        return userId;
+        return this.userId;
     }
 
     public void setUserId(String userId) {
@@ -120,7 +120,7 @@ public class FriendBean {
     }
 
     public String getNickName() {
-        return nickName;
+        return this.nickName;
     }
 
     public void setNickName(String nickName) {
@@ -128,7 +128,7 @@ public class FriendBean {
     }
 
     public String getPhone() {
-        return phone;
+        return this.phone;
     }
 
     public void setPhone(String phone) {
@@ -136,15 +136,15 @@ public class FriendBean {
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
 
     public void setAddress(String address) {
         this.address = address;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public boolean getDeleted() {
+        return this.deleted;
     }
 
     public void setDeleted(boolean deleted) {
@@ -152,7 +152,7 @@ public class FriendBean {
     }
 
     public String getDesc() {
-        return desc;
+        return this.desc;
     }
 
     public void setDesc(String desc) {
@@ -160,15 +160,15 @@ public class FriendBean {
     }
 
     public String getMarkName() {
-        return markName;
+        return this.markName;
     }
 
     public void setMarkName(String markName) {
         this.markName = markName;
     }
 
-    public boolean isForbiddenVisitPengYouQuan() {
-        return forbiddenVisitPengYouQuan;
+    public boolean getForbiddenVisitPengYouQuan() {
+        return this.forbiddenVisitPengYouQuan;
     }
 
     public void setForbiddenVisitPengYouQuan(boolean forbiddenVisitPengYouQuan) {
@@ -176,7 +176,7 @@ public class FriendBean {
     }
 
     public String getPengYouQuanDayLimitDesc() {
-        return pengYouQuanDayLimitDesc;
+        return this.pengYouQuanDayLimitDesc;
     }
 
     public void setPengYouQuanDayLimitDesc(String pengYouQuanDayLimitDesc) {
@@ -184,7 +184,7 @@ public class FriendBean {
     }
 
     public String getPengYouQuanContent() {
-        return pengYouQuanContent;
+        return this.pengYouQuanContent;
     }
 
     public void setPengYouQuanContent(String pengYouQuanContent) {
@@ -192,18 +192,18 @@ public class FriendBean {
     }
 
     public String getXiangQingContent() {
-        return xiangQingContent;
+        return this.xiangQingContent;
     }
 
     public void setXiangQingContent(String xiangQingContent) {
         this.xiangQingContent = xiangQingContent;
     }
 
-    public boolean getDeleted() {
-        return this.deleted;
+    public boolean isDeleted() {
+        return deleted;
     }
 
-    public boolean getForbiddenVisitPengYouQuan() {
-        return this.forbiddenVisitPengYouQuan;
+    public boolean isForbiddenVisitPengYouQuan() {
+        return forbiddenVisitPengYouQuan;
     }
 }
